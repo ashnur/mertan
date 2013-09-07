@@ -6,6 +6,19 @@ void function(){
         return l
     }
 
+    function pointFromLines(a, b){
+        return null
+    }
+
+    function pointFromLinePlane(a, b){
+        return null
+    }
+
+    function meetPlanes(){
+        var planes = u.slice(arguments)
+        return null
+    }
+
     function has(line, point){
         var q = lineFromPoints(line.base, point)
             , d = q.vector.map(function(coeff, idx){
@@ -33,6 +46,9 @@ void function(){
         return same_direction(d) === false ? false : true
     }
 
+    function perpendiculars(a, b){
+        return V.dot(a.vector, b.vector) == ZERO
+    }
     function lineToString(line){
         return '['+line.base+'] + λ('+line.vector+') '
     }
@@ -51,13 +67,15 @@ void function(){
             }
             , has: u.enslave(has)
             , parallelTo: u.enslave(parallels)
+            , perpendicularTo: u.enslave(perpendiculars)
             , toString: u.enslave(lineToString)
         })
 
-
-
-
     module.exports = {
         line: function(){ return line.make.apply(line, arguments) }
+        , joinLines: lineFromPoints
+        , meetLines: pointFromLines
+        , meetLinePlane: pointFromLinePlane
+        , meetPlanes: meetPlanes
     }
 }()

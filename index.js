@@ -1,26 +1,40 @@
 void function(){
 
+    function vector_from_points(A, B){ return V.sub(B,A) }
 
-    function lineFromPoints(A, B){
-        var l = line.make(A, V.sub(B,A))
-        return l
+    function Q_between_points(A,B){
+        var v = vector_from_points(A,B)
+        return Q_of_vector(v)
     }
 
-    function pointFromLines(a, b){
+    function Q_of_vector(v){ return V.dot(v,v) }
+
+    function S_between_vectors(v,w){
+        var a = V.dot(v,w)
+        return R(1).sub(a.times(a).div(Q_of_vector(v).times(Q_of_vector(w))))
+    }
+
+    function line_from_points(A, B){
+        return line.make(A, vector_from_points(A, B))
+    }
+
+    function meet_of_lines(a, b){
+        if ( equal(a.base, b.base) ) return a.base
+
         return null
     }
 
-    function pointFromLinePlane(a, b){
+    function meet_of_line_with_plane(a, b){
         return null
     }
 
-    function meetPlanes(){
+    function meet_of_planes(){
         var planes = u.slice(arguments)
         return null
     }
 
     function has(line, point){
-        var q = lineFromPoints(line.base, point)
+        var q = line_from_points(line.base, point)
             , d = q.vector.map(function(coeff, idx){
                     return coeff.div(line.vector[idx])
                   })
@@ -60,6 +74,8 @@ void function(){
         , u = require('totemizer')
         , viral = require('viral')
         , V = require('momentum')
+        , M = require('vatrix')
+        , equal = require('deep-equal')
         , line = viral.extend({
             init: function(base, vector){
                 this.base = base
@@ -73,9 +89,11 @@ void function(){
 
     module.exports = {
         line: function(){ return line.make.apply(line, arguments) }
-        , joinLines: lineFromPoints
-        , meetLines: pointFromLines
-        , meetLinePlane: pointFromLinePlane
-        , meetPlanes: meetPlanes
+        , joinLines: line_from_points
+        , meetLines: meet_of_lines
+        , meetLinePlane: meet_of_line_with_plane
+        , meetPlanes: meet_of_planes
+        , Q: Q_between_points
+        , S: S_between_vectors
     }
 }()

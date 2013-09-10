@@ -61,4 +61,15 @@ describe('Lines', function() {
                     .perpendicularTo(gm.line([R(0),R(-2,3)],[R(1,2),R(2,3)])))
                         .to.be(true)
     })
+
+    it('returns quadrance between two points', function(){
+        expect(gm.Q([R(3),R(-12)],[R(15),R(4)])).to
+            .be(R(12).times(R(12)).add(R(16).times(R(16))))
+    })
+    it('returns spread between two vectors', function(){
+        //spread is 1 when perpendicular
+        expect(gm.S(line2D_4.vector, line2D_5.vector)).to.be(R(1))
+        //spread is 0 when parallel
+        expect(gm.S(line3D_1.vector, line3D_2.vector)).to.be(R(0))
+    })
 })

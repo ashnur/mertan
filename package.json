@@ -12,7 +12,9 @@
     "biginteger": "~1.0.1",
     "viral": "~0.0.4",
     "rationals": "~0.1.6",
-    "momentum": "~0.1.3"
+    "momentum": "~0.1.3",
+    "deep-equal": "0.0.0",
+    "vatrix": "0.0.3"
   },
   "devDependencies": {
     "mocha": "*",

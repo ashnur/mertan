@@ -19,9 +19,26 @@ void function(){
     }
 
     function meet_of_lines(a, b){
+        if ( ! intersecting(a,b) ) return undefined
         if ( equal(a.base, b.base) ) return a.base
+        var m = a.base.map(function(P1, i){
+            return [
+                    a.vector[i]
+                  , ZERO.sub(b.vector[i])
+                ]
+        })
+        var t = M.mrr(m)
+        var inv = t[1]
+        //console.log('inv\n', M.drawMatrix(inv))
+        var c = a.base.map(function(p1, i){ return b.base[i].sub(p1) })
+        //console.log('c\n', c+'')
+        var p = M.mm(inv, c)
+        //console.log('p\n', p+'')
+        var r = a.base.map(function(p1,i){
+            return p1.add(p[0].times(a.vector[i]))
+        })
 
-        return null
+        return r
     }
 
     function meet_of_line_with_plane(a, b){
@@ -34,30 +51,34 @@ void function(){
     }
 
     function has(line, point){
-        var q = line_from_points(line.base, point)
-            , d = q.vector.map(function(coeff, idx){
-                    return coeff.div(line.vector[idx])
-                  })
-
-        return same_direction(d) === false ? false : true
-
+        if ( equal(point, line.base) ) return true
+        var v = vector_from_points(point, line.base)
+        return S_between_vectors(v, line.vector) == ZERO
     }
 
-    function same_direction(d){
-        return d.reduce(function(c,v){
-            return v == INF || v == ORG ? c
-                 : c == undefined       ? v
-                 : v != c               ? false
-                 :                        c
-        }, undefined)
+    function identical(a, b){
+        return has(a, b.base) ? same_direction(a,b) : false
+    }
+
+    function same_direction(a, b){
+        return S_between_vectors(a.vector, b.vector) == ZERO
     }
 
     function parallels(a, b){
-        var d = a.vector.map(function(coeff, idx){
-                return coeff.div(b.vector[idx])
-              })
+        return same_direction(a, b) ? ! has(a, b.base): false
+    }
+    function skew(a, b){
+        var v = V.sub(a.base, b.base)
+        var d = M.mrr([a.vector, b.vector, v])
 
-        return same_direction(d) === false ? false : true
+        return S_between_vectors(a.vector, b.vector) == ZERO ? false : M.isIdentity(d[0])
+    }
+
+    function intersecting(a, b){
+        var v = V.sub(a.base, b.base)
+        var d = M.mrr([a.vector, b.vector, v])
+        console.log(M.drawMatrix(d[0]))
+        return S_between_vectors(a.vector, b.vector) == ZERO ? false : ! M.isIdentity(d[0])
     }
 
     function perpendiculars(a, b){
@@ -82,14 +103,18 @@ void function(){
                 this.vector = vector
             }
             , has: u.enslave(has)
-            , parallelTo: u.enslave(parallels)
+            , parallel: u.enslave(parallels)
+            , identical: u.enslave(identical)
+            , skewing: u.enslave(skew)
             , perpendicularTo: u.enslave(perpendiculars)
+            , intersecting: u.enslave(intersecting)
             , toString: u.enslave(lineToString)
+
         })
 
     module.exports = {
         line: function(){ return line.make.apply(line, arguments) }
-        , joinLines: line_from_points
+        , joinPoints: line_from_points
         , meetLines: meet_of_lines
         , meetLinePlane: meet_of_line_with_plane
         , meetPlanes: meet_of_planes

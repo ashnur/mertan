@@ -27,8 +27,7 @@ void function(){
                   , ZERO.sub(b.vector[i])
                 ]
         })
-        var t = M.mrr(m)
-        var inv = t[1]
+        var inv = M.pinv(m)
         //console.log('inv\n', M.drawMatrix(inv))
         var c = a.base.map(function(p1, i){ return b.base[i].sub(p1) })
         //console.log('c\n', c+'')
@@ -75,10 +74,10 @@ void function(){
     }
 
     function intersecting(a, b){
-        var v = V.sub(a.base, b.base)
+        if ( a.vector.length < 3 && b.vector.length < 3 ) return true
+        var v = vector_from_points(a.base, b.base)
         var d = M.mrr([a.vector, b.vector, v])
-        console.log(M.drawMatrix(d[0]))
-        return S_between_vectors(a.vector, b.vector) == ZERO ? false : ! M.isIdentity(d[0])
+        return S_between_vectors(a.vector, b.vector) == ZERO ? false : ! M.linearlyDependent(d[0])
     }
 
     function perpendiculars(a, b){

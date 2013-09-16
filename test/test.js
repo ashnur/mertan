@@ -1,3 +1,4 @@
+require('better-stack-traces')
 var gm = require('../')
     , expect = require('expect.js')
     , R = require('rationals')
@@ -25,8 +26,9 @@ describe('Lines', function() {
       , line3D_4 = gm.line(V([6,-5,4]),V([3,-11,-13]))
       , line3D_5 = gm.joinPoints(V([1,4,-2]),V([3,8,6]))
       , line3D_6 = gm.joinPoints(V([0,4,8]),V([6,10,-10]))
-      , line4D_1 = gm.line(V([1,1,1,1]),V([2,2,2,2]))
-      , line4D_2 = gm.line(V([1,-1,-1,1]),V([2,-2,2,-2]))
+      , line4D_1 = gm.line(V([1,2,-3,-4]),V([35,42,-49,-56]))
+      , line4D_2 = gm.line(V([9,10,11,12]),V([-13,-14,-7,-8]))
+
 
 
     it('checks if point lies on line', function() {
@@ -88,6 +90,7 @@ describe('Lines', function() {
     })
 
     it('check if lines are intersecting', function(){
+        expect(line2D_1.intersecting(line2D_2)).to.be(true)
         expect(line3D_5.intersecting(line3D_6)).to.be(true)
         expect(line3D_1.intersecting(line3D_4)).to.be(false)
     })
@@ -96,7 +99,6 @@ describe('Lines', function() {
         expect(gm.meetLines(line2D_1,line2D_2)).to.eql([R(5,2),R(1,4)])
         expect(gm.meetLines(gm.line(V([3,0]),V([1,0])),gm.line(V([0,-3]),V([0,1])))).to.eql([R(0),R(0)])
         expect(gm.meetLines(line3D_5,line3D_6)).to.eql(V([2,6,2]))
-        expect(gm.meetLines(line4D_1,line4D_2)).to.eql(V([1,1,1,1]))
-//        expect(gm.meetLines(line3D_1,line3D_2)).to.eql(null)
+        expect(gm.meetLines(line4D_1,line4D_2)).to.eql(V([-4,-4,4,4]))
     })
 })

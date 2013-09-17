@@ -67,22 +67,22 @@ void function(){
         return same_direction(a, b) ? ! has(a, b.base): false
     }
     function skew(a, b){
-        var v = V.sub(a.base, b.base)
-        var d = M.mrr([a.vector, b.vector, v])
-
-        return S_between_vectors(a.vector, b.vector) == ZERO ? false : M.isIdentity(d[0])
+        if ( a.vector.length < 3 && b.vector.length < 3 ) return false
+        return ! same_direction(a, b) &&  ! intersecting(a, b)
     }
 
     function intersecting(a, b){
         if ( a.vector.length < 3 && b.vector.length < 3 ) return true
-        var v = vector_from_points(a.base, b.base)
-        var d = M.mrr([a.vector, b.vector, v])
-        return S_between_vectors(a.vector, b.vector) == ZERO ? false : ! M.linearlyDependent(d[0])
+        return same_direction(a, b) ? false
+                                    : ! M.linearlyDependent([a.vector
+                                                           , b.vector
+                                                           , vector_from_points(a.base, b.base)])
     }
 
     function perpendiculars(a, b){
         return V.dot(a.vector, b.vector) == ZERO
     }
+
     function lineToString(line){
         return '['+line.base+'] + λ('+line.vector+') '
     }
